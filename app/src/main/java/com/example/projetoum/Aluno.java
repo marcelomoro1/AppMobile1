@@ -10,6 +10,16 @@ public class Aluno implements Serializable {
     private String endereco;
     private String curso;
 
+    private byte[] fotoBytes;
+
+    public byte[] getFotoBytes() {
+        return fotoBytes;
+    }
+
+    public void setFotoBytes(byte[] fotoBytes) {
+        this.fotoBytes = fotoBytes;
+    }
+
     public Integer getId() {
         return id;
     }

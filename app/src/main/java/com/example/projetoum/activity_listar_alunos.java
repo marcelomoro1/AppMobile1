@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
@@ -28,6 +30,7 @@ public class activity_listar_alunos extends AppCompatActivity {
     private ListView listView;
     private AlunoDAO dao;
     private List<Aluno> alunos;
+    private ArrayAdapter<Aluno> adaptador;
 
     private List<Aluno> alunosFiltrados = new ArrayList<Aluno>();
 
@@ -48,8 +51,33 @@ public class activity_listar_alunos extends AppCompatActivity {
         //registrar o menu de contexto (excluir e atualizar) na listview
         registerForContextMenu(listView);
 
-        ArrayAdapter<Aluno> adaptador = new ArrayAdapter<Aluno>(this, android.R.layout.simple_list_item_1, alunos);
+        adaptador = new ArrayAdapter<Aluno>(this, android.R.layout.simple_list_item_1, alunosFiltrados);
         listView.setAdapter(adaptador);
+
+        // Vínculo do campo de busca e do botão
+        EditText textoListar = findViewById(R.id.textoListar);
+        Button btnBuscar = findViewById(R.id.btnBuscar);
+
+        // Ao clicar em "Buscar", filtra a lista pelo texto digitado (insensível a maiúsculas/minúsculas)
+        btnBuscar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String textoBusca = textoListar.getText().toString().toLowerCase().trim();
+                alunosFiltrados.clear();
+                if (textoBusca.isEmpty()) {
+                    // Se o campo estiver vazio, mostra todos os alunos
+                    alunosFiltrados.addAll(alunos);
+                } else {
+                    // Filtra: mantém apenas os alunos cujo nome contém o texto digitado
+                    for (Aluno a : alunos) {
+                        if (a.getNome().toLowerCase().contains(textoBusca)) {
+                            alunosFiltrados.add(a);
+                        }
+                    }
+                }
+                adaptador.notifyDataSetChanged();
+            }
+        });
 
     }
 
@@ -130,8 +158,9 @@ public class activity_listar_alunos extends AppCompatActivity {
         // Limpa a lista filtrada e adiciona os novos alunos
         alunosFiltrados.clear();
         alunosFiltrados.addAll(alunos);
-        // Atualiza o adapter da ListView para refletir os novos dados
-        ArrayAdapter<Aluno> adaptador = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, alunosFiltrados);
-        listView.setAdapter(adaptador);
+        // Notifica o adapter existente que os dados mudaram
+        if (adaptador != null) {
+            adaptador.notifyDataSetChanged();
+        }
     }
 }
