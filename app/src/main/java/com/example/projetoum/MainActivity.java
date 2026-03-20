@@ -221,5 +221,11 @@ private byte[] fotoBytesDigitada = null;
         startActivity(intent);
     }
 
+    public void irCep(View view){
+        // O nome deve ser exatamente o nome da classe Java que você criou
+        Intent intent = new Intent(this, buscar_cep.class);
+        startActivity(intent);
+    }
+
 
 }
